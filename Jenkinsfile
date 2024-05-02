@@ -4,63 +4,63 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Stage 1: Build'
-                echo 'Task: Build the code using a build automation tool to compile and package your code.'
+                echo 'Step 1: Build'
+                echo 'Action: Utilize a build automation tool to compile and package the software.'
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Stage 2: Unit and Integration Tests'
-                echo 'Task: Run unit tests to ensure the code functions as expected, and run integration tests to ensure the different components of the application work together as expected.'
+                echo 'Step 2: Unit and Integration Testing'
+                echo 'Action: Execute unit tests to verify individual code parts and perform integration tests to check interoperability of components.'
             }
         }
 
         stage('Code Analysis') {
             steps {
-                echo 'Stage 3: Code Analysis'
-                echo 'Task: Integrate a code analysis tool to analyze the code and ensure it meets industry standards.'
-                echo 'Tool: SonarQube'
+                echo 'Step 3: Code Analysis'
+                echo 'Action: Deploy a static code analysis tool to check code quality and adherence to standards.'
+                echo 'Analysis Tool: SonarQube'
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo 'Stage 4: Security Scan'
-                echo 'Task: Perform a security scan on the code using a tool to identify any vulnerabilities.'
+                echo 'Step 4: Security Scan'
+                echo 'Action: Conduct a security audit on the code to detect vulnerabilities using a specialized tool.'
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo 'Stage 5: Deploy to Staging'
-                echo 'Task: Deploy the application to a staging server (e.g., AWS EC2 instance).'
+                echo 'Step 5: Deployment to Staging'
+                echo 'Action: Deploy the software to a staging environment, such as an AWS EC2 instance.'
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Stage 6: Integration Tests on Staging'
-                echo 'Task: Run integration tests on the staging environment to ensure the application functions as expected in a production-like environment.'
+                echo 'Step 6: Testing on Staging'
+                echo 'Action: Execute integration tests in the staging setup to validate performance in a near-production scenario.'
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo 'Stage 7: Deploy to Production'
-                echo 'Task: Deploy the application to a production server (e.g.,AWS EC2 instance).'
+                echo 'Step 7: Production Deployment'
+                echo 'Action: Roll out the software to a production server, for example, an AWS EC2 instance.'
             }
         }
     }
 
     post {
         always {
-            emailext (
+            emailext(
                 subject: "Pipeline Status: ${currentBuild.currentResult}",
                 body: """
-                    Pipeline Status: ${currentBuild.currentResult}
-                    Jenkins URL: ${env.BUILD_URL}
-                    Build Number: ${env.BUILD_NUMBER}
+                    Status of the Pipeline: ${currentBuild.currentResult}
+                    Jenkins Page: ${env.BUILD_URL}
+                    ID of Build: ${env.BUILD_NUMBER}
                 """,
                 attachLog: true,
                 to: 'samarthmita.36@gmail.com'
@@ -69,15 +69,15 @@ pipeline {
         failure {
             when {
                 expression {
-                    it.name == 'Unit and Integration Tests' || it.name == 'Security Scan'
+                    it.name in ['Unit and Integration Tests', 'Security Scan']
                 }
             }
-            emailext (
-                subject: "${it.name} Stage Failed: ${currentBuild.currentResult}",
+            emailext(
+                subject: "Failure in ${it.name}: ${currentBuild.currentResult}",
                 body: """
-                    ${it.name} Stage Status: ${currentBuild.currentResult}
-                    Jenkins URL: ${env.BUILD_URL}
-                    Build Number: ${env.BUILD_NUMBER}
+                    Status of ${it.name}: ${currentBuild.currentResult}
+                    Link to Jenkins: ${env.BUILD_URL}
+                    Number of Build: ${env.BUILD_NUMBER}
                 """,
                 attachLog: true,
                 to: 'samarthmita.36@gmail.com'
